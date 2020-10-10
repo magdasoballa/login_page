@@ -31,10 +31,16 @@ const useStyles = makeStyles((theme) => ({
     },
     submit: {
         margin: theme.spacing(3, 0, 2),
+        backgroundColor: theme.palette.secondary.main,
     },
+    link: {
+        cursor: 'pointer',
+        color: 'secondary',
+
+    }
 }));
 
-export function Register() {
+export const Register = () => {
     const classes = useStyles();
     const history = useHistory()
     return (
@@ -112,10 +118,12 @@ export function Register() {
                         Sign Up
                     </Button>
                     <Grid container justify="flex-end">
-                        <Grid item>
-                            <div onClick={() => history.push('/login')}>
+                        <Grid item >
+                            <Link
+                                className={classes.link}
+                                onClick={() => history.push('/login')}>
                                 Already have an account? Sign in
-                            </div>
+                            </Link>
                         </Grid>
                     </Grid>
                 </form>

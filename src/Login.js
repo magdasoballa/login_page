@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export function Login() {
+export const Login = () =>{
     const [user, setUser] = useState('')
     const [pass, setPass] = useState('')
     const [remember, setRemember] = useState(false)
@@ -49,10 +49,10 @@ export function Login() {
         localStorage.setItem('remember',remember)
         localStorage.setItem('user', remember ? user : '')
         localStorage.setItem('user', remember ? user : '')
+        history.push('/usersite')
     }
 
     useEffect(()=>{
-
         const remember = localStorage.getItem('remember') === 'true'
         const user = remember ? localStorage.getItem('user') : ''
         setUser(user)
