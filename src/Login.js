@@ -56,7 +56,8 @@ export const Login = () =>{
                         email:email
                     })
                     localStorage.setItem('remember', remember)
-                    localStorage.setItem('email', remember ? email : '')
+                    localStorage.setItem('email', email)
+                    // localStorage.setItem('email', remember ? email : '')
                     resolve();
                 })
                 .catch((err) => {

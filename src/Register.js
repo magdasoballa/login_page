@@ -57,9 +57,8 @@ export const Register = () => {
             firebase.auth().createUserWithEmailAndPassword(email,pass)
                 .then(() => {
                     db.collection('users').doc(email).set({
-                        email: email,
-                        pass:pass
-                    });
+                        email: email
+                    })
                     localStorage.setItem("email", email);
                     localStorage.setItem("name", name);
                     localStorage.setItem("secondname", secondname);

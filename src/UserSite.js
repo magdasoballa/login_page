@@ -1,33 +1,43 @@
 import React, {useEffect, useState} from 'react'
+import firebase from "firebase";
+
+const email = localStorage.getItem("email")
+
 
 export const UserSite = () => {
     const [name, setName] = useState('')
     const [age, setAge] = useState('')
     const [describe, setDescribe] = useState('')
-    const [save, setSave] = useState(false)
 
     useEffect(() => {
-        const save = localStorage.getItem('save') === 'true'
-        const name = save ? localStorage.getItem('name') : ''
-        const age = save ? localStorage.getItem('age') : ''
-        const describe = save ? localStorage.getItem('describe') : ''
-
-        setDescribe(describe)
-        setName(name)
-        setAge(age)
-
-    }, [])
+        const db = firebase.firestore()
+        db.collection('users').doc(email).get()
+            .then(data => {
+                const userData = data.data();
+               setName(userData.name)
+                setAge(userData.age)
+                setDescribe(userData.describe)
+        });
+}, [])
 
 
     const handleClick = (e) => {
         e.preventDefault();
-        setSave(true)
-        localStorage.setItem('name', name)
-        localStorage.setItem('age', age)
-        localStorage.setItem('describe', describe)
-        localStorage.setItem('save', save)
+        return new Promise((resolve, reject) => {
+            console.log(email)
+            const db = firebase.firestore()
+            db.collection('users').doc(email).set({
+                name: name,
+                age: age,
+                describe: describe
+            })
+                .then(() => {
+                    resolve();
+                }).catch((err) => {
+                reject(err.message);
+            });
+        });
     }
-
 
     return (
         <div>
