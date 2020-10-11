@@ -5,6 +5,9 @@ import './index.scss';
 import {Login} from './Login';
 import {Register} from "./Register";
 import {UserSite} from "./UserSite";
+import UserProvider from "./UserProvider";
+
+
 
 const App = () => {
     return (
@@ -22,7 +25,9 @@ const App = () => {
     )
 }
 ReactDOM.render(
-    <App/>,
+    <UserProvider>
+    <App/>
+    </UserProvider>,
     document.getElementById('root')
 );
 

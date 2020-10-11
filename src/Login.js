@@ -12,6 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { useHistory } from 'react-router-dom'
+import firebase from "firebase";
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -39,24 +40,35 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const Login = () =>{
-    const [user, setUser] = useState('')
+    const [email, setEmail] = useState('')
     const [pass, setPass] = useState('')
     const [remember, setRemember] = useState(false)
     const history = useHistory();
 
     const handleFormSubmit = (e) => {
         e.preventDefault()
-        localStorage.setItem('remember',remember)
-        localStorage.setItem('user', remember ? user : '')
-        localStorage.setItem('user', remember ? user : '')
-        history.push('/usersite')
+        return new Promise((resolve, reject) => {
+            const db = firebase.firestore();
+            firebase.auth().signInWithEmailAndPassword(email, pass)
+                .then(() => {
+                    db.collection('users').doc(email).get()
+                    db.collection('logged in').doc(email).set({
+                        email:email
+                    })
+                    localStorage.setItem('remember', remember)
+                    localStorage.setItem('email', remember ? email : '')
+                    resolve();
+                })
+                .catch((err) => {
+                    reject(err.message);
+                });
+            history.push('/usersite')
+        })
     }
-
     useEffect(()=>{
-        const remember = localStorage.getItem('remember') === 'true'
-        const user = remember ? localStorage.getItem('user') : ''
-        setUser(user)
-
+            const remember = localStorage.getItem('remember') === 'true'
+            const email = remember ? localStorage.getItem('email') : ''
+            setEmail(email)
     },[])
 
     const classes = useStyles();
@@ -82,8 +94,8 @@ export const Login = () =>{
                         name="email"
                         autoComplete="email"
                         autoFocus
-                        value={user}
-                        onChange={e => setUser(e.target.value)}
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
                     />
                     <TextField
                         variant="outlined"
