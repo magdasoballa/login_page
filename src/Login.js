@@ -11,7 +11,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import { useHistory } from 'react-router-dom'
+import {useHistory} from 'react-router-dom'
 import firebase from "firebase";
 
 const useStyles = makeStyles((theme) => ({
@@ -32,45 +32,27 @@ const useStyles = makeStyles((theme) => ({
     submit: {
         margin: theme.spacing(3, 0, 2),
         backgroundColor: theme.palette.secondary.main,
-    },
-    link: {
-        color: 'secondary',
-
     }
 }));
 
-export const Login = () =>{
+export const Login = () => {
     const [email, setEmail] = useState('')
     const [pass, setPass] = useState('')
-    const [remember, setRemember] = useState(false)
+    const [err, setErr] = useState('');
     const history = useHistory();
 
     const handleFormSubmit = (e) => {
         e.preventDefault()
-        return new Promise((resolve, reject) => {
-            const db = firebase.firestore();
-            firebase.auth().signInWithEmailAndPassword(email, pass)
-                .then(() => {
-                    db.collection('users').doc(email).get()
-                    db.collection('logged in').doc(email).set({
-                        email:email
-                    })
-                    localStorage.setItem('remember', remember)
-                    localStorage.setItem('email', email)
-                    // localStorage.setItem('email', remember ? email : '')
-                    resolve();
-                })
-                .catch((err) => {
-                    reject(err.message);
-                });
-            history.push('/usersite')
-        })
+        localStorage.setItem("email", email);
+        firebase.auth().signInWithEmailAndPassword(email, pass)
+            .then(() => {
+                history.push('/usersite')
+            })
+            .catch((err) => {
+                setErr(err.message);
+            });
     }
-    useEffect(()=>{
-            const remember = localStorage.getItem('remember') === 'true'
-            const email = remember ? localStorage.getItem('email') : ''
-            setEmail(email)
-    },[])
+
 
     const classes = useStyles();
 
@@ -108,16 +90,10 @@ export const Login = () =>{
                         type="password"
                         id="password"
                         autoComplete="current-password"
-                        onChange={e =>setPass(e.target.value)}
+                        onChange={e => setPass(e.target.value)}
                         value={pass}
                     />
-                    <FormControlLabel
-                        control={<Checkbox value="remember" color="primary"/>}
-                        label="Remember me"
-                        value={remember}
-                        onChange={e =>setRemember(e.target.checked)}
 
-                    />
                     <Button
                         type="submit"
                         fullWidth
@@ -128,17 +104,13 @@ export const Login = () =>{
                     >
                         Sign In
                     </Button>
-                    <Grid container className={classes.link}>
-                        <Grid item xs>
-                            <Link href="#" variant="body2">
-                                Forgot password?
-                            </Link>
-                        </Grid>
-                        <Grid item>
+                    <Grid container>
+
+                        <Grid item container justify="center">
                             <Link href="#" variant="body2"
-                                 onClick={() => {
-                                     history.push('/register')
-                                 }}
+                                  onClick={() => {
+                                      history.push('/register')
+                                  }}
                             >
                                 {"Don't have an account? Sign Up"}
                             </Link>
@@ -146,6 +118,9 @@ export const Login = () =>{
                     </Grid>
                 </form>
             </div>
+            {err && (
+                <p style={{color:'red'}}>{err}</p>
+            )}
         </Container>
     );
 }

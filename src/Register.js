@@ -3,8 +3,6 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -36,8 +34,6 @@ const useStyles = makeStyles((theme) => ({
     },
     link: {
         cursor: 'pointer',
-        color: 'secondary',
-
     }
 }));
 
@@ -46,6 +42,8 @@ export const Register = () => {
     const [secondname, setSecondname] = useState('')
     const [email, setEmail] = useState('')
     const [pass, setPass] = useState('')
+    const [err, setErr] = useState('');
+
 
     const classes = useStyles();
     const history = useHistory()
@@ -59,16 +57,11 @@ export const Register = () => {
                     db.collection('users').doc(email).set({
                         email: email
                     })
-                    localStorage.setItem("email", email);
-                    localStorage.setItem("name", name);
-                    localStorage.setItem("secondname", secondname);
-
                     resolve();
                 })
                 .catch((err) => {
-                    reject(err.message);
+                    reject(setErr(err.message));
                 });
-            // history.push('/usersite')
 
         })
     }
@@ -141,12 +134,6 @@ export const Register = () => {
                                     onChange={e => setPass(e.target.value)}
                                 />
                             </Grid>
-                            <Grid item xs={12}>
-                                <FormControlLabel
-                                    control={<Checkbox value="allowExtraEmails" color="primary"/>}
-                                    label="I want to receive inspiration, marketing promotions and updates via email."
-                                />
-                            </Grid>
                         </Grid>
                         <Button
                             type="submit"
@@ -158,7 +145,7 @@ export const Register = () => {
                         >
                             Sign Up
                         </Button>
-                        <Grid container justify="flex-end">
+                        <Grid container justify="center">
                             <Grid item>
                                 <Link
                                     className={classes.link}
@@ -169,7 +156,9 @@ export const Register = () => {
                         </Grid>
                     </form>
                 </div>
-
+                {err && (
+                    <p style={{color:'red'}}>{err}</p>
+                )}
             </Container>
         );
     }
